@@ -81,7 +81,7 @@ function geocode($address){
          
 		// Store data in output array
 		$data_arr = array();            
-             
+
 		array_push(
 			$data_arr, 
 				$lati, 			//0
@@ -93,7 +93,7 @@ function geocode($address){
 				$state,			//6
 				$zip			//7
 		);
-            	
+
 		// Return output array
 		return $data_arr;
              
