@@ -82,14 +82,14 @@ function geocode($address){
              
             array_push(
                 $data_arr, 
-                    $lati, 					//0
-                    $longi, 				//1
+                    $lati, 			//0
+                    $longi, 			//1
                     $formatted_address,		//2
-                    $street_number,			//3
+                    $street_number,		//3
                     $street_address,		//4
-                    $city,					//5
-                    $state,					//6
-                    $zip					//7
+                    $city,			//5
+                    $state,			//6
+                    $zip			//7
                 );
              
             return $data_arr;
