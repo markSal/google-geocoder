@@ -8,7 +8,7 @@ function m_sleep($milliseconds){
 // Make requests to geocoder
 function file_get_content_curl($url){
     // Throw Error if the curl function doesn't exist.
-    if (!function_exists('curl_init')){ 
+    if(!function_exists('curl_init')){
         die('CURL is not installed!');
     }
 
