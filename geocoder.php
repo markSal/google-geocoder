@@ -1,35 +1,31 @@
 <?php
+
+// Delay fucnction for geocode requests
 function m_sleep($milliseconds){
 	return usleep($milliseconds * 1000);
 }
 
-function formatTimePeriod($endtime, $starttime){
-  $duration = $endtime - $starttime;
-
-  $hours = (int) ($duration / 60 / 60);
-  $minutes = (int) ($duration / 60) - $hours * 60;
-  $seconds = (int) $duration - $hours * 60 * 60 - $minutes * 60;
-
-  return ($hours == 0 ? "00":$hours) . ":" . ($minutes == 0 ? "00":($minutes < 10? "0".$minutes:$minutes)) . ":" . ($seconds == 0 ? "00":($seconds < 10? "0".$seconds:$seconds));
-}
-
+// Make requests to geocoder
 function file_get_content_curl($url){
     // Throw Error if the curl function doesn't exist.
-    if (!function_exists('curl_init'))
-    { 
+    if (!function_exists('curl_init')){ 
         die('CURL is not installed!');
     }
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	
+    // Send request to geocoder and store response
     $output = curl_exec($ch);
     curl_close($ch);
+	
+    // Return geocoder response
     return $output;
 }
 
 
-// function to geocode address, it will return false if unable to geocode address
+// Geocode address input
 function geocode($address){
  
     // url encode the address
@@ -106,24 +102,32 @@ function geocode($address){
     }
 }
 
-
+// Begin geocoding proceedure
 $record = 0;
+
+// Load in CSV file
 $fp = file("input.csv");
+
+// Count total rows
 $totalRecords = count($fp);
 
+// Open input CSV File
 if(($handle1 = fopen("input.csv", "r")) !== FALSE){
-    
+    	
+	// Create output CSV file
 	if(($handle2 = fopen("output.csv", "w")) !== FALSE){
-
+		
+		// Loop though input CSV file rows
 		while(($data = fgetcsv($handle1, 7000, ",")) !== FALSE){
-
-			$random_time = mt_rand(20, 25);
 			
-			// Alter your data
+			// Delay geocoder exection by a random number of milliseconds to avoid abuse flagging
+			$random_time = mt_rand(20, 25);
 			m_sleep($random_time);
-
+			
+			// Geocode input CSV row data
 			$geocode = geocode($data[0]);
 			
+			// Store geocoder output in array
 			$new_data[0] = $data[0];
 			$new_data[1] = $geocode[0];
 			$new_data[2] = $geocode[1];
@@ -134,16 +138,21 @@ if(($handle1 = fopen("input.csv", "r")) !== FALSE){
 			$new_data[7] = $geocode[6];
 			$new_data[8] = $geocode[7];
 
-			// Write back to CSV format
+			// Write output array to output CSV file
 			fputcsv($handle2, $new_data);
 			
+			// Output status message
 			print("Record: " . ($record+1) . " of " . $totalRecords . " - " . $new_data[0]. "\r\n");
 
 
 			$record++;
 		}
+		
+		// Close output CSV
 		fclose($handle2);
 	}
+	
+	// Close input CSV
 	fclose($handle1);
 }
 ?>
